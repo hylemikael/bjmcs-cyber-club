@@ -1,0 +1,427 @@
+// Prisma schema for BJMCS Cyber Club
+// Phase 1: Foundation
+// Phase 2: Application Database Model
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+// -----------------------------------------------------------------------------
+// ENUMS
+// -----------------------------------------------------------------------------
+
+enum ApplicationStatus {
+  PENDING
+  SELECTED
+  NOT_SELECTED
+}
+
+enum ProgrammingExperience {
+  NONE
+  BEGINNER
+  INTERMEDIATE
+  ADVANCED
+}
+
+enum WeeklyAvailability {
+  LESS_THAN_2_HOURS
+  HOURS_2_TO_4
+  HOURS_4_TO_6
+  MORE_THAN_6_HOURS
+}
+
+// -----------------------------------------------------------------------------
+
+enum SessionStatus {
+  OPEN
+  CLOSED
+}
+
+enum AssignmentTargetType {
+  ALL
+  GROUP
+  INDIVIDUAL
+}
+
+// MODELS
+// -----------------------------------------------------------------------------
+
+model RegistrationSettings {
+  id                String    @id @default("default") // Singleton pattern
+  isOpen            Boolean   @default(false)
+  deadline          DateTime?
+  clubDisplayName   String    @default("BJMCS Cyber Club")
+  englishNameFuture String?
+  amharicNameFuture String?
+  updatedAt         DateTime  @updatedAt
+}
+
+model Application {
+  id                   String               @id @default(cuid())
+  reference            String               @unique // Format: BJMCS-YYYY-XXXXX
+  status               ApplicationStatus    @default(PENDING)
+  statusUpdatedAt      DateTime?
+  selectionEmailStatus SelectionEmailStatus @default(NOT_SENT)
+  emailAttemptedAt     DateTime?
+  emailSentAt          DateTime?
+  emailError           String?
+  createdAt            DateTime             @default(now())
+  updatedAt            DateTime             @updatedAt
+
+  student Student?
+
+  // 1. Identity
+
+  fullName String
+  age      Int
+  gender   String
+  phone    String
+  email    String
+
+  // 2. School
+  // Stored as strings to easily allow future additions (e.g., Grade "13" or Section "K")
+  grade   String
+  section String
+
+  // 3. Cyber / Technical Background
+  hasStudiedCyber    Boolean
+  cyberStudyDesc     String?
+  programmingExp     ProgrammingExperience @default(NONE)
+  programmingLangs   String[]
+  cyberTopics        String[]
+  previousExperience String[]
+  operatingSystems   String[]
+
+  // 4. Motivation
+  motivationJoin     String
+  motivationLearn    String
+  areasOfInterest    String[]
+  weeklyAvailability WeeklyAvailability
+
+  // 6. Agreements
+  ethicsAgreement Boolean @default(false)
+  termsAgreement  Boolean @default(false)
+
+  // 5. Additional
+  additionalSkills String?
+  howHeardAboutUs  String?
+
+  // 6. Terms / Declarations
+  agreedToAccuracy    Boolean
+  agreedToRules       Boolean
+  agreedToLegal       Boolean
+  agreedToNoGuarantee Boolean
+  termsAcceptedAt     DateTime @default(now())
+
+  // Relations
+  projects Project[]
+
+  @@index([status])
+  @@index([createdAt])
+}
+
+model Project {
+  id            String  @id @default(cuid())
+  projectName   String
+  description   String?
+  projectType   String?
+  githubUrl     String?
+  portfolioUrl  String?
+  fileReference String?
+  links         String[]
+  files         String[] // Placeholder for future file uploads
+
+  applicationId String
+  application   Application @relation(fields: [applicationId], references: [id], onDelete: Cascade)
+
+  @@index([applicationId])
+}
+
+model AdminUser {
+  id           String   @id @default(cuid())
+  email        String   @unique
+  passwordHash String
+  name         String
+  createdAt    DateTime @default(now())
+  updatedAt    DateTime @updatedAt
+}
+
+enum SelectionEmailStatus {
+  NOT_SENT
+  SENT
+  FAILED
+}
+
+model Student {
+  id                  String                   @id @default(cuid())
+  applicationId       String                   @unique
+  application         Application              @relation(fields: [applicationId], references: [id], onDelete: Cascade)
+  email               String                   @unique
+  passwordHash        String?
+  isActive            Boolean                  @default(false)
+  activationToken     String?                  @unique
+  activationExpires   DateTime?
+  lastLoginAt         DateTime?
+  groupId             String?
+  group               Group?                   @relation(fields: [groupId], references: [id], onDelete: SetNull)
+  attendances         Attendance[]
+  submissions         Submission[]
+  messages            Message[]
+  faydaIdentity       FaydaIdentity?
+  academicRecord      AcademicRecord?
+  createdAt           DateTime                 @default(now())
+  updatedAt           DateTime                 @updatedAt
+  taskAssignments     TaskAssignment[]
+  announcementTargets AnnouncementTarget[]
+  materialTargets     LearningMaterialTarget[]
+}
+
+enum AttendanceStatus {
+  PRESENT
+  ABSENT
+  LATE
+  EXCUSED
+}
+
+model AttendanceSession {
+  id        String        @id @default(cuid())
+  date      DateTime
+  title     String
+  groupId   String?
+  group     Group?        @relation(fields: [groupId], references: [id], onDelete: SetNull)
+  status    SessionStatus @default(OPEN)
+  records   Attendance[]
+  createdAt DateTime      @default(now())
+  updatedAt DateTime      @updatedAt
+}
+
+model Attendance {
+  id        String            @id @default(cuid())
+  studentId String
+  student   Student           @relation(fields: [studentId], references: [id], onDelete: Cascade)
+  sessionId String
+  session   AttendanceSession @relation(fields: [sessionId], references: [id], onDelete: Cascade)
+  status    AttendanceStatus
+  notes     String?
+  createdAt DateTime          @default(now())
+  updatedAt DateTime          @updatedAt
+
+  @@unique([studentId, sessionId])
+}
+
+enum TaskStatus {
+  DRAFT
+  PUBLISHED
+}
+
+model TaskAssignment {
+  id         String               @id @default(cuid())
+  taskId     String
+  task       Task                 @relation(fields: [taskId], references: [id], onDelete: Cascade)
+  targetType AssignmentTargetType
+  groupId    String?
+  group      Group?               @relation(fields: [groupId], references: [id], onDelete: Cascade)
+  studentId  String?
+  student    Student?             @relation(fields: [studentId], references: [id], onDelete: Cascade)
+  createdAt  DateTime             @default(now())
+  updatedAt  DateTime             @updatedAt
+}
+
+model Task {
+  id                   String           @id @default(cuid())
+  title                String
+  description          String
+  instructions         String           @db.Text
+  deadline             DateTime
+  status               TaskStatus       @default(DRAFT)
+  allowLateSubmissions Boolean          @default(true)
+  attachmentUrl        String?
+  assignments          TaskAssignment[]
+  submissions          Submission[]
+  createdAt            DateTime         @default(now())
+  updatedAt            DateTime         @updatedAt
+}
+
+enum SubmissionStatus {
+  SUBMITTED
+  LATE
+  GRADED
+}
+
+model Submission {
+  id               String           @id @default(cuid())
+  studentId        String
+  student          Student          @relation(fields: [studentId], references: [id], onDelete: Cascade)
+  taskId           String
+  task             Task             @relation(fields: [taskId], references: [id], onDelete: Cascade)
+  submissionType   SubmissionType   @default(LINK)
+  content          String           @db.Text
+  link             String?
+  links            String[]
+  fileUrl          String?
+  originalFileName String?
+  studentNote      String?          @db.Text
+  status           SubmissionStatus @default(SUBMITTED)
+  score            Score?
+  createdAt        DateTime         @default(now())
+  updatedAt        DateTime         @updatedAt
+
+  @@unique([studentId, taskId])
+}
+
+model Score {
+  id           String     @id @default(cuid())
+  submissionId String     @unique
+  submission   Submission @relation(fields: [submissionId], references: [id], onDelete: Cascade)
+  points       Float
+  feedback     String?    @db.Text
+  createdAt    DateTime   @default(now())
+  updatedAt    DateTime   @updatedAt
+}
+
+enum MaterialStatus {
+  DRAFT
+  PUBLISHED
+}
+
+model LearningMaterialTarget {
+  id         String               @id @default(cuid())
+  materialId String
+  material   LearningMaterial     @relation(fields: [materialId], references: [id], onDelete: Cascade)
+  targetType AssignmentTargetType
+  groupId    String?
+  group      Group?               @relation(fields: [groupId], references: [id], onDelete: Cascade)
+  studentId  String?
+  student    Student?             @relation(fields: [studentId], references: [id], onDelete: Cascade)
+}
+
+model LearningMaterial {
+  id           String                   @id @default(cuid())
+  title        String
+  description  String?
+  category     String
+  url          String
+  status       MaterialStatus           @default(DRAFT)
+  resourceType String                   @default("LINK")
+  targets      LearningMaterialTarget[]
+  createdAt    DateTime                 @default(now())
+  updatedAt    DateTime                 @updatedAt
+}
+
+// Groups & Mentors
+model Mentor {
+  id        String   @id @default(cuid())
+  name      String
+  email     String?
+  groups    Group[]
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+}
+
+model Group {
+  id                  String                   @id @default(cuid())
+  name                String
+  mentorId            String?
+  mentor              Mentor?                  @relation(fields: [mentorId], references: [id], onDelete: SetNull)
+  students            Student[]
+  createdAt           DateTime                 @default(now())
+  updatedAt           DateTime                 @updatedAt
+  attendanceSessions  AttendanceSession[]
+  taskAssignments     TaskAssignment[]
+  announcementTargets AnnouncementTarget[]
+  materialTargets     LearningMaterialTarget[]
+}
+
+// Fayda Identity (External)
+model FaydaIdentity {
+  id          String   @id @default(cuid())
+  studentId   String   @unique
+  student     Student  @relation(fields: [studentId], references: [id], onDelete: Cascade)
+  legalName   String
+  gender      String
+  birthdate   DateTime
+  nationality String
+  externalId  String
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+}
+
+enum AnnouncementStatus {
+  DRAFT
+  PUBLISHED
+}
+
+model AnnouncementTarget {
+  id             String               @id @default(cuid())
+  announcementId String
+  announcement   Announcement         @relation(fields: [announcementId], references: [id], onDelete: Cascade)
+  targetType     AssignmentTargetType
+  groupId        String?
+  group          Group?               @relation(fields: [groupId], references: [id], onDelete: Cascade)
+  studentId      String?
+  student        Student?             @relation(fields: [studentId], references: [id], onDelete: Cascade)
+}
+
+model Announcement {
+  id          String               @id @default(cuid())
+  title       String
+  content     String               @db.Text
+  status      AnnouncementStatus   @default(DRAFT)
+  publishedAt DateTime?
+  expiresAt   DateTime?
+  targets     AnnouncementTarget[]
+  createdAt   DateTime             @default(now())
+  updatedAt   DateTime             @updatedAt
+}
+
+model AuditLog {
+  id        String   @id @default(cuid())
+  actor     String
+  action    String
+  target    String?
+  timestamp DateTime @default(now())
+}
+
+// Announcements / Messages
+model Message {
+  id        String   @id @default(cuid())
+  studentId String
+  student   Student  @relation(fields: [studentId], references: [id], onDelete: Cascade)
+  sender    String
+  title     String
+  content   String   @db.Text
+  isRead    Boolean  @default(false)
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+}
+
+enum CertificateStatus {
+  RESULTS_NOT_FINAL
+  PENDING_APPROVAL
+  APPROVED_READY
+  CERTIFICATE_AVAILABLE
+}
+
+// Academic Record / Grading
+model AcademicRecord {
+  id               String            @id @default(cuid())
+  studentId        String            @unique
+  student          Student           @relation(fields: [studentId], references: [id], onDelete: Cascade)
+  midExamScore     Float?
+  finalExamScore   Float?
+  isFinalized      Boolean           @default(false)
+  isApprovedByDG   Boolean           @default(false)
+  certificateState CertificateStatus @default(RESULTS_NOT_FINAL)
+  createdAt        DateTime          @default(now())
+  updatedAt        DateTime          @updatedAt
+}
+
+enum SubmissionType {
+  LINK
+  PDF
+}
