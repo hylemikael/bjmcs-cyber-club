@@ -1,14 +1,10 @@
-/**
- * Prisma client singleton.
- *
- * In development, Next.js hot-reloads modules which would create
- * multiple Prisma Client instances. We store the instance on `globalThis`
- * to prevent connection exhaustion.
- *
- * This module must only be imported on the server side.
- */
-
 import { PrismaClient } from "@prisma/client";
+import { Pool } from "pg";
+import { PrismaPg } from "@prisma/adapter-pg";
+
+const connectionString = `${process.env.DATABASE_URL}`;
+const pool = new Pool({ connectionString });
+const adapter = new PrismaPg(pool);
 
 const globalForPrisma = globalThis as unknown as {
   prisma: PrismaClient | undefined;
@@ -17,6 +13,7 @@ const globalForPrisma = globalThis as unknown as {
 export const db =
   globalForPrisma.prisma ??
   new PrismaClient({
+    adapter,
     log:
       process.env.NODE_ENV === "development"
         ? ["query", "error", "warn"]

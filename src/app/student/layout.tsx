@@ -6,57 +6,61 @@ import { useState } from "react";
 import { logoutAction } from "@/app/login/actions";
 import { Button } from "@/components/ui";
 import { cn } from "@/lib/utils";
-import { Menu, X, LogOut, Shield } from "lucide-react";
+import { Menu, X, LogOut, Shield, LayoutDashboard, Calendar, Bell, BookOpen, Award, FileText, User, CheckSquare } from "lucide-react";
 
 export default function StudentLayout({ children }: { children: React.ReactNode }) {
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
   const pathname = usePathname();
 
   const navLinks = [
-    { title: "Dashboard", href: "/student" },
-    { title: "Profile", href: "/student/profile" },
-    { title: "Announcements", href: "/student/announcements" },
-    { title: "Tasks & Submissions", href: "/student/tasks" },
-    { title: "Attendance", href: "/student/attendance" },
-    { title: "Results", href: "/student/results" },
-    { title: "Materials", href: "/student/materials" },
-    { title: "Certificate", href: "/student/certificate" },
+    { title: "Dashboard", href: "/student", icon: LayoutDashboard },
+    { title: "Profile", href: "/student/profile", icon: User },
+    { title: "Announcements", href: "/student/announcements", icon: Bell },
+    { title: "Tasks", href: "/student/tasks", icon: CheckSquare },
+    { title: "Attendance", href: "/student/attendance", icon: Calendar },
+    { title: "Results", href: "/student/results", icon: FileText },
+    { title: "Materials", href: "/student/materials", icon: BookOpen },
+    { title: "Certificate", href: "/student/certificate", icon: Award },
   ];
 
   return (
-    <div className="min-h-screen flex flex-col bg-slate-50 dark:bg-slate-950 text-slate-900 dark:text-slate-100">
-      <header className="bg-white/80 backdrop-blur-md dark:bg-slate-950/80 border-b border-slate-200 dark:border-slate-800 shadow-sm sticky top-0 z-30 transition-all">
+    <div className="min-h-screen flex flex-col bg-[#07111F] text-slate-100 selection:bg-blue-500/30">
+      <header className="bg-[#0F1B2D]/90 backdrop-blur-md border-b border-[#1E2D4A] shadow-sm sticky top-0 z-30 transition-all">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 h-16 flex items-center justify-between">
-          <Link href="/student" className="flex items-center gap-2 font-bold text-lg tracking-tight hover:opacity-80 transition-opacity">
-            <Shield className="h-6 w-6 text-blue-600 dark:text-cyan-500" />
-            <span className="bg-gradient-to-r from-slate-900 to-slate-700 bg-clip-text text-transparent dark:from-white dark:to-slate-300">
-              Student Portal
+          <Link href="/student" className="flex items-center gap-3 font-bold text-lg tracking-tight group">
+            <div className="w-9 h-9 rounded-xl bg-blue-600/10 flex items-center justify-center border border-blue-500/20 group-hover:border-blue-500/40 transition-colors shadow-[0_0_15px_rgba(37,99,235,0.15)]">
+              <Shield className="h-5 w-5 text-blue-500" />
+            </div>
+            <span className="text-white">
+              BJMCS <span className="text-cyan-400">Cyber</span>
             </span>
           </Link>
 
           {/* Desktop Nav */}
           <nav className="hidden lg:flex items-center space-x-1 overflow-x-auto">
             {navLinks.map((link) => {
-              const isActive = pathname === link.href;
+              const isActive = pathname === link.href || (link.href !== "/student" && pathname.startsWith(link.href));
+              const Icon = link.icon;
               return (
                 <Link 
                   key={link.title}
                   href={link.href}
                   prefetch={false}
                   className={cn(
-                    "px-3 py-2 rounded-md text-sm font-medium transition-all duration-200 whitespace-nowrap",
+                    "px-3 py-2 flex items-center gap-2 rounded-lg text-sm font-medium transition-all duration-200 whitespace-nowrap",
                     isActive 
-                      ? "bg-slate-100 text-blue-600 dark:bg-slate-800 dark:text-cyan-400" 
-                      : "text-slate-600 hover:bg-slate-50 hover:text-slate-900 dark:text-slate-400 dark:hover:bg-slate-900 dark:hover:text-white"
+                      ? "bg-blue-600/10 text-cyan-400 border border-blue-500/20" 
+                      : "text-slate-400 hover:bg-[#16243A] hover:text-slate-200 border border-transparent"
                   )}
                 >
+                  <Icon className="w-4 h-4" />
                   {link.title}
                 </Link>
               );
             })}
-            <div className="pl-4 ml-2 border-l border-slate-200 dark:border-slate-800">
+            <div className="pl-4 ml-2 border-l border-[#1E2D4A]">
               <form action={logoutAction}>
-                <Button type="submit" variant="ghost" size="sm" className="text-slate-500 hover:text-red-600 dark:hover:text-red-400">
+                <Button type="submit" variant="ghost" size="sm" className="text-slate-400 hover:text-red-400 hover:bg-red-500/10">
                   <LogOut className="h-4 w-4 mr-2" />
                   Sign Out
                 </Button>
@@ -66,7 +70,7 @@ export default function StudentLayout({ children }: { children: React.ReactNode 
 
           {/* Mobile Toggle */}
           <button
-            className="flex p-2 lg:hidden text-slate-600 dark:text-slate-300 rounded-md hover:bg-slate-100 dark:hover:bg-slate-800"
+            className="flex p-2 lg:hidden text-slate-300 rounded-md hover:bg-[#16243A]"
             onClick={() => setIsMobileMenuOpen(!isMobileMenuOpen)}
           >
             {isMobileMenuOpen ? <X className="h-6 w-6" /> : <Menu className="h-6 w-6" />}
@@ -75,10 +79,11 @@ export default function StudentLayout({ children }: { children: React.ReactNode 
 
         {/* Mobile Menu Dropdown */}
         {isMobileMenuOpen && (
-          <div className="lg:hidden border-t border-slate-200 dark:border-slate-800 bg-white dark:bg-slate-950 px-4 py-4 shadow-lg absolute w-full left-0 top-16">
-            <nav className="flex flex-col gap-1">
+          <div className="lg:hidden border-t border-[#1E2D4A] bg-[#0F1B2D] px-4 py-4 shadow-xl absolute w-full left-0 top-16">
+            <nav className="flex flex-col gap-2">
               {navLinks.map((link) => {
-                const isActive = pathname === link.href;
+                const isActive = pathname === link.href || (link.href !== "/student" && pathname.startsWith(link.href));
+                const Icon = link.icon;
                 return (
                   <Link
                     key={link.title}
@@ -86,20 +91,21 @@ export default function StudentLayout({ children }: { children: React.ReactNode 
                     prefetch={false}
                     onClick={() => setIsMobileMenuOpen(false)}
                     className={cn(
-                      "block px-4 py-3 rounded-md text-base font-medium transition-colors",
+                      "flex items-center gap-3 px-4 py-3 rounded-lg text-base font-medium transition-colors",
                       isActive
-                        ? "bg-blue-50 text-blue-700 dark:bg-slate-800/50 dark:text-cyan-400"
-                        : "text-slate-700 hover:bg-slate-50 dark:text-slate-300 dark:hover:bg-slate-900"
+                        ? "bg-blue-600/10 text-cyan-400 border border-blue-500/20"
+                        : "text-slate-400 hover:bg-[#16243A] hover:text-slate-200 border border-transparent"
                     )}
                   >
+                    <Icon className="w-5 h-5" />
                     {link.title}
                   </Link>
                 );
               })}
-              <div className="mt-4 pt-4 border-t border-slate-100 dark:border-slate-800">
+              <div className="mt-4 pt-4 border-t border-[#1E2D4A]">
                 <form action={logoutAction}>
-                  <Button type="submit" variant="outline" className="w-full justify-center text-slate-700 dark:text-slate-300">
-                    <LogOut className="h-4 w-4 mr-2" />
+                  <Button type="submit" variant="outline" className="w-full justify-center bg-transparent border-[#1E2D4A] text-slate-300 hover:bg-[#16243A]">
+                    <LogOut className="h-5 w-5 mr-3" />
                     Sign Out
                   </Button>
                 </form>
@@ -109,7 +115,7 @@ export default function StudentLayout({ children }: { children: React.ReactNode 
         )}
       </header>
       
-      <main className="flex-1 max-w-7xl w-full mx-auto p-4 sm:p-6 lg:p-8">
+      <main className="flex-1 max-w-7xl w-full mx-auto w-full">
         {children}
       </main>
     </div>

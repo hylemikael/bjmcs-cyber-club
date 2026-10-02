@@ -3,6 +3,8 @@ import { notFound } from "next/navigation";
 import Link from "next/link";
 import ReviewList from "./ReviewList";
 import { cn } from "@/lib/utils";
+import { ArrowLeft, Clock, Target } from "lucide-react";
+import { StatusBadge } from "@/components/ui";
 
 export const dynamic = "force-dynamic";
 
@@ -71,42 +73,36 @@ export default async function TaskReviewPage({ params }: { params: Promise<{ tas
   return (
     <div className="space-y-6">
       <div>
-        <Link href="/admin/tasks" className="inline-flex items-center text-sm font-medium text-slate-500 hover:text-slate-900 dark:hover:text-slate-100 transition-colors mb-4">
-          <span className="mr-1">&larr;</span> Back to Tasks
+        <Link href="/admin/tasks" className="inline-flex items-center text-sm font-medium text-slate-400 hover:text-primary transition-colors mb-4">
+          <ArrowLeft className="w-4 h-4 mr-1" /> Back to Missions
         </Link>
         <div className="flex flex-col md:flex-row justify-between items-start md:items-center gap-4">
           <div>
-            <h1 className="text-3xl font-bold tracking-tight text-slate-900 dark:text-slate-100">
-              Review Submissions: <span className="text-blue-600 dark:text-blue-500">{task.title}</span>
+            <h1 className="text-3xl font-bold tracking-tight text-slate-100 flex items-center gap-3">
+              Review Intel: <span className="text-primary">{task.title}</span>
             </h1>
-            <div className="flex flex-wrap items-center gap-2 mt-2 text-sm text-slate-500 dark:text-slate-400 font-medium">
-              <span className="bg-slate-100 dark:bg-slate-800 px-2 py-0.5 rounded-md text-slate-700 dark:text-slate-300">
-                Assigned to {studentIds.length} students
+            <div className="flex flex-wrap items-center gap-2 mt-2 text-sm text-slate-400 font-medium">
+              <span className="bg-background border border-slate-800 px-2 py-0.5 rounded-md flex items-center gap-1">
+                <Target className="w-3.5 h-3.5 text-accent" />
+                Assigned to {studentIds.length} operatives
               </span>
-              <span>&middot;</span>
+              <span className="text-slate-600">&middot;</span>
               <span className={cn(
-                "inline-flex items-center gap-1.5",
-                new Date(task.deadline) < new Date() ? "text-rose-600 dark:text-rose-400 font-semibold" : ""
+                "inline-flex items-center gap-1.5 bg-background border border-slate-800 px-2 py-0.5 rounded-md",
+                new Date(task.deadline) < new Date() ? "text-rose-400 border-rose-500/30" : ""
               )}>
-                <svg className="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}><path strokeLinecap="round" strokeLinejoin="round" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z" /></svg>
+                <Clock className="w-3.5 h-3.5" />
                 Deadline: {new Date(task.deadline).toLocaleString(undefined, { month: 'short', day: 'numeric', hour: '2-digit', minute: '2-digit' })}
               </span>
             </div>
           </div>
           <div className="text-left md:text-right shrink-0">
-            <span className={cn(
-              "px-3 py-1 rounded-full text-xs font-semibold tracking-wide uppercase inline-flex items-center",
-              task.status === 'PUBLISHED' 
-                ? "bg-emerald-100 text-emerald-800 dark:bg-emerald-500/10 dark:text-emerald-400" 
-                : "bg-slate-100 text-slate-800 dark:bg-slate-800 dark:text-slate-300"
-            )}>
-              {task.status}
-            </span>
+            <StatusBadge status={task.status} />
           </div>
         </div>
       </div>
 
-      <div className="bg-white dark:bg-slate-950 border border-slate-200 dark:border-slate-800 rounded-xl shadow-sm overflow-hidden">
+      <div className="bg-surface border border-slate-800 rounded-xl shadow-sm overflow-hidden">
         <ReviewList reviewData={reviewData} task={task} />
       </div>
     </div>

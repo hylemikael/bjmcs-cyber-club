@@ -1,7 +1,8 @@
 import { db } from "@/lib/db";
-import { Card, CardContent, CardHeader, CardTitle, Button } from "@/components/ui";
+import { Card, CardContent, CardHeader, CardTitle, PageHeader, EmptyState } from "@/components/ui";
 import CreateGroupModal from "./_components/CreateGroupModal";
 import CreateMentorModal from "./_components/CreateMentorModal";
+import { Users, UserPlus } from "lucide-react";
 
 export const dynamic = "force-dynamic";
 
@@ -20,10 +21,11 @@ export default async function AdminGroupsPage() {
   return (
     <div className="space-y-6">
       <div className="flex flex-col md:flex-row justify-between items-start md:items-center gap-4">
-        <div>
-          <h1 className="text-2xl font-bold tracking-tight text-slate-900 dark:text-slate-100">Groups & Mentors</h1>
-          <p className="text-sm text-slate-500 dark:text-slate-400 mt-1">Organize cohorts and assign leadership.</p>
-        </div>
+        <PageHeader 
+          title="Squads & Handlers (Groups)" 
+          description="Organize operative cohorts and assign mentor leadership."
+          badge={`${groups.length} Squads`}
+        />
         <div className="flex flex-wrap gap-2">
           <CreateMentorModal />
           <CreateGroupModal mentors={mentors} />
@@ -32,41 +34,43 @@ export default async function AdminGroupsPage() {
 
       <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
         {/* GROUPS */}
-        <Card className="border-slate-200 dark:border-slate-800 shadow-sm flex flex-col">
-          <CardHeader className="pb-4">
-            <CardTitle className="text-lg">Cohorts / Groups</CardTitle>
+        <Card className="border-slate-800 bg-surface shadow-sm flex flex-col">
+          <CardHeader className="pb-4 border-b border-slate-800/50">
+            <CardTitle className="text-lg flex items-center gap-2 text-slate-100">
+              <Users className="w-5 h-5 text-primary" /> Squadrons
+            </CardTitle>
           </CardHeader>
           <CardContent className="p-0 flex-1">
             {groups.length === 0 ? (
-              <div className="p-12 text-center">
-                <p className="text-sm text-slate-500 dark:text-slate-400">No groups defined.</p>
+              <div className="p-12">
+                <EmptyState icon={<Users className="w-5 h-5" />} title="No squads defined" description="Create a new squadron." />
               </div>
             ) : (
               <div className="overflow-x-auto">
                 <table className="w-full text-left text-sm whitespace-nowrap">
-                  <thead className="bg-slate-50 dark:bg-slate-900 border-b border-slate-200 dark:border-slate-800">
+                  <thead className="bg-background border-b border-slate-800">
                     <tr>
-                      <th className="px-6 py-4 text-xs font-semibold text-slate-500 dark:text-slate-400 uppercase tracking-wider">Group Name</th>
-                      <th className="px-6 py-4 text-xs font-semibold text-slate-500 dark:text-slate-400 uppercase tracking-wider">Mentor</th>
-                      <th className="px-6 py-4 text-xs font-semibold text-slate-500 dark:text-slate-400 uppercase tracking-wider text-right">Students</th>
+                      <th className="px-6 py-4 text-xs font-semibold text-slate-400 uppercase tracking-wider">Group Name</th>
+                      <th className="px-6 py-4 text-xs font-semibold text-slate-400 uppercase tracking-wider">Handler</th>
+                      <th className="px-6 py-4 text-xs font-semibold text-slate-400 uppercase tracking-wider text-right">Operatives</th>
                     </tr>
                   </thead>
-                  <tbody className="divide-y divide-slate-100 dark:divide-slate-800/50">
+                  <tbody className="divide-y divide-slate-800/50">
                     {groups.map(g => (
-                      <tr key={g.id} className="hover:bg-slate-50 dark:hover:bg-slate-800/50 transition-colors duration-200">
-                        <td className="px-6 py-4 font-medium text-slate-900 dark:text-slate-100">{g.name}</td>
-                        <td className="px-6 py-4 text-slate-600 dark:text-slate-300">
+                      <tr key={g.id} className="hover:bg-slate-800/50 transition-colors duration-200">
+                        <td className="px-6 py-4 font-medium text-slate-100 font-mono">{g.name}</td>
+                        <td className="px-6 py-4 text-slate-300">
                           {g.mentor ? (
-                            <span className="inline-flex items-center gap-1.5">
-                              <span className="w-2 h-2 rounded-full bg-blue-500"></span>
+                            <span className="inline-flex items-center gap-1.5 bg-background border border-slate-700 px-2 py-0.5 rounded text-xs font-medium">
+                              <span className="w-2 h-2 rounded-full bg-primary"></span>
                               {g.mentor.name}
                             </span>
                           ) : (
-                            <span className="text-slate-400 dark:text-slate-500 italic text-sm">Unassigned</span>
+                            <span className="text-slate-500 italic text-sm">Unassigned</span>
                           )}
                         </td>
                         <td className="px-6 py-4 text-right">
-                          <span className="inline-flex items-center justify-center px-2.5 py-0.5 rounded-full bg-slate-100 dark:bg-slate-800 text-slate-700 dark:text-slate-300 text-xs font-medium">
+                          <span className="inline-flex items-center justify-center px-2.5 py-0.5 rounded border border-slate-700 bg-background text-slate-300 text-xs font-mono">
                             {g._count.students}
                           </span>
                         </td>
@@ -80,41 +84,43 @@ export default async function AdminGroupsPage() {
         </Card>
 
         {/* MENTORS */}
-        <Card className="border-slate-200 dark:border-slate-800 shadow-sm flex flex-col">
-          <CardHeader className="pb-4">
-            <CardTitle className="text-lg">Mentors</CardTitle>
+        <Card className="border-slate-800 bg-surface shadow-sm flex flex-col">
+          <CardHeader className="pb-4 border-b border-slate-800/50">
+            <CardTitle className="text-lg flex items-center gap-2 text-slate-100">
+              <UserPlus className="w-5 h-5 text-accent" /> Handlers (Mentors)
+            </CardTitle>
           </CardHeader>
           <CardContent className="p-0 flex-1">
             {mentors.length === 0 ? (
-              <div className="p-12 text-center">
-                <p className="text-sm text-slate-500 dark:text-slate-400">No mentors defined.</p>
+              <div className="p-12">
+                <EmptyState icon={<UserPlus className="w-5 h-5" />} title="No handlers defined" description="Add mentors to lead squads." />
               </div>
             ) : (
               <div className="overflow-x-auto">
                 <table className="w-full text-left text-sm whitespace-nowrap">
-                  <thead className="bg-slate-50 dark:bg-slate-900 border-b border-slate-200 dark:border-slate-800">
+                  <thead className="bg-background border-b border-slate-800">
                     <tr>
-                      <th className="px-6 py-4 text-xs font-semibold text-slate-500 dark:text-slate-400 uppercase tracking-wider">Name</th>
-                      <th className="px-6 py-4 text-xs font-semibold text-slate-500 dark:text-slate-400 uppercase tracking-wider">Email</th>
-                      <th className="px-6 py-4 text-xs font-semibold text-slate-500 dark:text-slate-400 uppercase tracking-wider text-right">Assigned Groups</th>
+                      <th className="px-6 py-4 text-xs font-semibold text-slate-400 uppercase tracking-wider">Name</th>
+                      <th className="px-6 py-4 text-xs font-semibold text-slate-400 uppercase tracking-wider">Email</th>
+                      <th className="px-6 py-4 text-xs font-semibold text-slate-400 uppercase tracking-wider text-right">Assigned Squads</th>
                     </tr>
                   </thead>
-                  <tbody className="divide-y divide-slate-100 dark:divide-slate-800/50">
+                  <tbody className="divide-y divide-slate-800/50">
                     {mentors.map(m => (
-                      <tr key={m.id} className="hover:bg-slate-50 dark:hover:bg-slate-800/50 transition-colors duration-200">
-                        <td className="px-6 py-4 font-medium text-slate-900 dark:text-slate-100">{m.name}</td>
-                        <td className="px-6 py-4 text-slate-600 dark:text-slate-300">{m.email || <span className="text-slate-400 dark:text-slate-500 italic">-</span>}</td>
+                      <tr key={m.id} className="hover:bg-slate-800/50 transition-colors duration-200">
+                        <td className="px-6 py-4 font-medium text-slate-100">{m.name}</td>
+                        <td className="px-6 py-4 text-slate-300 font-mono text-xs">{m.email || <span className="text-slate-500 italic">-</span>}</td>
                         <td className="px-6 py-4 text-right">
                           {m.groups.length > 0 ? (
                             <div className="flex flex-wrap justify-end gap-1">
                               {m.groups.map(g => (
-                                <span key={g.id} className="inline-flex px-2 py-0.5 rounded-md bg-blue-50 text-blue-700 dark:bg-blue-500/10 dark:text-blue-400 text-xs font-medium border border-blue-100 dark:border-blue-500/20">
+                                <span key={g.id} className="inline-flex px-2 py-0.5 rounded border border-primary/30 bg-primary/10 text-primary text-xs font-mono">
                                   {g.name}
                                 </span>
                               ))}
                             </div>
                           ) : (
-                            <span className="text-slate-400 dark:text-slate-500 italic text-sm">None</span>
+                            <span className="text-slate-500 italic text-sm">None</span>
                           )}
                         </td>
                       </tr>

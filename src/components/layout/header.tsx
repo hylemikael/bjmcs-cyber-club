@@ -6,39 +6,34 @@ import { siteConfig } from "@/config/site";
 import { Menu, X } from "lucide-react";
 import { cn } from "@/lib/utils";
 
-// Assuming Button is available in the barrel export
-import { Button } from "@/components/ui";
-
 export function Header() {
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
 
-  // Fallback for nav if not in siteConfig
-  const navLinks = (siteConfig as any).nav || [
+  const navLinks = [
     { title: "Home", href: "/" },
-    { title: "About", href: "/about" },
-    { title: "Curriculum", href: "/curriculum" },
-    { title: "Events", href: "/events" },
+    { title: "About", href: "/#about" },
+    { title: "Programs", href: "/#programs" },
   ];
 
   return (
-    <header className="sticky top-0 z-50 w-full border-b border-slate-200/50 bg-white/80 backdrop-blur-md transition-all dark:border-slate-800/50 dark:bg-slate-950/80">
+    <header className="sticky top-0 z-50 w-full border-b border-[#0F1B2D] bg-[#07111F]/80 backdrop-blur-md transition-all">
       <div className="mx-auto flex h-20 max-w-7xl items-center justify-between px-4 sm:px-6 lg:px-8">
         {/* Brand */}
         <Link
           href="/"
-          className="flex items-center gap-3 font-bold text-slate-900 transition-opacity hover:opacity-90 dark:text-slate-100"
+          className="flex items-center gap-3 font-bold text-white transition-opacity hover:opacity-90"
         >
-          <CyberLogo className="h-9 w-9 text-blue-600 dark:text-cyan-400" />
+          <CyberLogo className="h-9 w-9 text-[#2563EB]" />
           <span className="text-xl tracking-tight">{siteConfig.name}</span>
         </Link>
 
         {/* Desktop Nav */}
         <nav className="hidden items-center gap-8 md:flex">
-          {navLinks.map((link: any) => (
+          {navLinks.map((link) => (
             <Link
               key={link.title}
               href={link.href}
-              className="text-sm font-medium text-slate-600 transition-colors hover:text-blue-600 dark:text-slate-300 dark:hover:text-cyan-400"
+              className="text-sm font-medium text-slate-300 transition-colors hover:text-[#06B6D4]"
             >
               {link.title}
             </Link>
@@ -47,13 +42,23 @@ export function Header() {
 
         {/* Desktop CTAs */}
         <div className="hidden items-center gap-4 md:flex">
-          <Link href="/login" className="hidden lg:flex inline-flex items-center justify-center rounded-lg font-medium px-4 py-2 text-sm text-slate-700 hover:bg-slate-100 dark:text-slate-300 dark:hover:bg-slate-800 transition-all duration-200">Log In</Link>
-          <Link href="/register" className="inline-flex items-center justify-center rounded-lg font-medium px-4 py-2 text-sm bg-blue-600 text-white shadow-sm hover:bg-blue-700 transition-all duration-200">Apply Now</Link>
+          <Link 
+            href="/login" 
+            className="inline-flex items-center justify-center rounded-lg font-medium px-4 py-2 text-sm text-slate-300 hover:bg-[#0F1B2D] hover:text-white transition-all duration-200"
+          >
+            Login
+          </Link>
+          <Link 
+            href="/register" 
+            className="inline-flex items-center justify-center rounded-lg font-medium px-4 py-2 text-sm bg-[#2563EB] text-white shadow-sm hover:bg-[#3B82F6] transition-all duration-200"
+          >
+            Apply Now
+          </Link>
         </div>
 
         {/* Mobile Menu Toggle */}
         <button
-          className="flex p-2 md:hidden text-slate-600 dark:text-slate-300"
+          className="flex p-2 md:hidden text-slate-300 hover:text-white"
           onClick={() => setIsMobileMenuOpen(!isMobileMenuOpen)}
           aria-label="Toggle menu"
         >
@@ -63,21 +68,33 @@ export function Header() {
 
       {/* Mobile Nav Dropdown */}
       {isMobileMenuOpen && (
-        <div className="md:hidden border-b border-slate-200 dark:border-slate-800 bg-white dark:bg-slate-950 px-4 py-6 shadow-lg">
+        <div className="md:hidden border-b border-[#0F1B2D] bg-[#07111F] px-4 py-6 shadow-lg">
           <nav className="flex flex-col gap-4">
-            {navLinks.map((link: any) => (
+            {navLinks.map((link) => (
               <Link
                 key={link.title}
                 href={link.href}
-                className="block text-base font-medium text-slate-700 hover:text-blue-600 dark:text-slate-200 dark:hover:text-cyan-400"
+                className="block text-base font-medium text-slate-300 hover:text-[#06B6D4]"
                 onClick={() => setIsMobileMenuOpen(false)}
               >
                 {link.title}
               </Link>
             ))}
-            <div className="mt-4 flex flex-col gap-3 pt-4 border-t border-slate-100 dark:border-slate-800">
-              <Link href="/login" onClick={() => setIsMobileMenuOpen(false)} className="w-full justify-center inline-flex items-center rounded-lg font-medium px-4 py-2 text-sm border border-slate-300 text-slate-700 hover:bg-slate-50 dark:border-slate-600 dark:text-slate-300 dark:hover:bg-slate-800 transition-all duration-200">Log In</Link>
-              <Link href="/register" onClick={() => setIsMobileMenuOpen(false)} className="w-full justify-center inline-flex items-center rounded-lg font-medium px-4 py-2 text-sm bg-blue-600 text-white shadow-sm hover:bg-blue-700 transition-all duration-200">Apply Now</Link>
+            <div className="mt-4 flex flex-col gap-3 pt-4 border-t border-[#0F1B2D]">
+              <Link 
+                href="/login" 
+                onClick={() => setIsMobileMenuOpen(false)} 
+                className="w-full justify-center inline-flex items-center rounded-lg font-medium px-4 py-2 text-sm border border-[#0F1B2D] text-slate-300 hover:bg-[#0F1B2D] hover:text-white transition-all duration-200"
+              >
+                Login
+              </Link>
+              <Link 
+                href="/register" 
+                onClick={() => setIsMobileMenuOpen(false)} 
+                className="w-full justify-center inline-flex items-center rounded-lg font-medium px-4 py-2 text-sm bg-[#2563EB] text-white shadow-sm hover:bg-[#3B82F6] transition-all duration-200"
+              >
+                Apply Now
+              </Link>
             </div>
           </nav>
         </div>
@@ -86,7 +103,6 @@ export function Header() {
   );
 }
 
-/** Professional Cyber/Tech Logo */
 function CyberLogo({ className }: { className?: string }) {
   return (
     <svg
@@ -109,7 +125,7 @@ function CyberLogo({ className }: { className?: string }) {
         strokeWidth="2.5"
         strokeLinecap="round"
         strokeLinejoin="round"
-        className="text-slate-900 dark:text-slate-100"
+        className="text-white"
       />
       <circle cx="20" cy="20" r="4" fill="currentColor" />
     </svg>

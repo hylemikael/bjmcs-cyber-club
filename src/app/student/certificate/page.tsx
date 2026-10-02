@@ -3,6 +3,8 @@ import { cookies } from "next/headers";
 import { redirect } from "next/navigation";
 import { verifyJwt } from "@/lib/auth";
 import { Card, CardHeader, CardTitle, CardContent } from "@/components/ui";
+import { Award, Lock, FileCheck, CheckCircle2, Download } from "lucide-react";
+import { PageHeader } from "@/components/ui/page-header";
 
 export const dynamic = "force-dynamic";
 
@@ -27,46 +29,46 @@ export default async function StudentCertificatePage() {
       case "RESULTS_NOT_FINAL":
         return { 
           label: "Results Not Final", 
-          color: "text-slate-500", 
-          bg: "bg-slate-100 dark:bg-slate-900/50",
-          border: "border-slate-200 dark:border-slate-800",
-          icon: <svg className="w-16 h-16 text-slate-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="1.5" d="M12 15v2m-6 4h12a2 2 0 002-2v-6a2 2 0 00-2-2H6a2 2 0 00-2 2v6a2 2 0 002 2zm10-10V7a4 4 0 00-8 0v4h8z"></path></svg>,
+          color: "text-slate-400", 
+          bg: "bg-[#16243A]",
+          border: "border-[#1E2D4A]",
+          icon: <Lock className="w-12 h-12 text-slate-500" />,
           desc: "Your final results must be calculated and officially finalized before certificate processing begins." 
         };
       case "PENDING_APPROVAL":
         return { 
           label: "Pending Approval", 
-          color: "text-amber-600 dark:text-amber-400", 
-          bg: "bg-amber-50 dark:bg-amber-900/20",
-          border: "border-amber-200 dark:border-amber-900/50",
-          icon: <svg className="w-16 h-16 text-amber-500" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="1.5" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z"></path></svg>,
+          color: "text-amber-400", 
+          bg: "bg-amber-900/10",
+          border: "border-amber-500/20",
+          icon: <FileCheck className="w-12 h-12 text-amber-500" />,
           desc: "Your results are finalized and currently pending official approval from the Director General." 
         };
       case "APPROVED_READY":
         return { 
           label: "Approved & Preparing", 
-          color: "text-blue-600 dark:text-blue-400", 
-          bg: "bg-blue-50 dark:bg-blue-900/20",
-          border: "border-blue-200 dark:border-blue-900/50",
-          icon: <svg className="w-16 h-16 text-blue-500" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="1.5" d="M9 12l2 2 4-4m5.618-4.016A11.955 11.955 0 0112 2.944a11.955 11.955 0 01-8.618 3.04A12.02 12.02 0 003 9c0 5.591 3.824 10.29 9 11.622 5.176-1.332 9-6.03 9-11.622 0-1.042-.133-2.052-.382-3.016z"></path></svg>,
+          color: "text-blue-400", 
+          bg: "bg-blue-900/10",
+          border: "border-blue-500/20",
+          icon: <CheckCircle2 className="w-12 h-12 text-blue-500" />,
           desc: "Your certificate is approved and is being prepared for physical or digital distribution." 
         };
       case "CERTIFICATE_AVAILABLE":
         return { 
           label: "Certificate Available", 
-          color: "text-emerald-600 dark:text-emerald-400", 
-          bg: "bg-emerald-50 dark:bg-emerald-900/20",
-          border: "border-emerald-200 dark:border-emerald-900/50",
-          icon: <svg className="w-16 h-16 text-emerald-500 drop-shadow-md" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="1.5" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"></path></svg>,
+          color: "text-emerald-400", 
+          bg: "bg-emerald-900/10",
+          border: "border-emerald-500/30",
+          icon: <Award className="w-16 h-16 text-emerald-400 drop-shadow-[0_0_15px_rgba(52,211,153,0.5)]" />,
           desc: "Your official cybersecurity academy certificate is now fully available." 
         };
       default:
         return { 
           label: "Unknown State", 
-          color: "text-slate-500", 
-          bg: "bg-slate-100 dark:bg-slate-900/50",
-          border: "border-slate-200 dark:border-slate-800",
-          icon: <svg className="w-16 h-16 text-slate-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="1.5" d="M12 8v4m0 4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"></path></svg>,
+          color: "text-slate-400", 
+          bg: "bg-[#16243A]",
+          border: "border-[#1E2D4A]",
+          icon: <Lock className="w-12 h-12 text-slate-500" />,
           desc: "Please contact administration regarding your certificate status." 
         };
     }
@@ -75,45 +77,44 @@ export default async function StudentCertificatePage() {
   const display = getStatusDisplay();
 
   return (
-    <div className="max-w-5xl mx-auto p-4 sm:p-6 lg:p-8 space-y-8 bg-slate-50 dark:bg-[#0a1628] min-h-[calc(100vh-4rem)] flex flex-col items-center justify-center relative overflow-hidden">
-      
-      {/* Decorative background effects */}
-      <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-full max-w-3xl h-[500px] bg-cyan-500/5 dark:bg-cyan-500/10 rounded-full blur-[100px] pointer-events-none"></div>
+    <div className="space-y-8 animate-in fade-in duration-500">
+      <PageHeader
+        title="Certification Status"
+        description="Track the status of your official BJMCS Cyber Club academy certificate."
+      />
 
-      <div className="text-center mb-4 relative z-10">
-        <h1 className="text-3xl sm:text-4xl font-black tracking-tight text-slate-900 dark:text-white mb-3">Credential Verification</h1>
-        <p className="text-slate-500 dark:text-slate-400">Track the issuance status of your official BJMCS Cyber Club Certificate.</p>
-      </div>
-
-      <Card className={`w-full max-w-2xl relative z-10 overflow-hidden transition-all duration-500 shadow-xl border-2 ${display.border} ${display.bg} backdrop-blur-sm`}>
-        {status === "CERTIFICATE_AVAILABLE" && (
-          <div className="absolute top-0 right-0 -mt-16 -mr-16 w-48 h-48 bg-emerald-500/20 rounded-full blur-3xl"></div>
-        )}
-        
-        <CardContent className="flex flex-col items-center text-center p-10 sm:p-14">
-          <div className={`w-32 h-32 rounded-full flex items-center justify-center mb-8 shadow-inner bg-white dark:bg-[#0f172a] border ${display.border}`}>
-            {display.icon}
-          </div>
-          
-          <div className="space-y-4 max-w-md">
-            <div className="text-xs font-bold uppercase tracking-[0.25em] text-slate-400 dark:text-slate-500">Status Update</div>
-            <h2 className={`text-2xl sm:text-3xl font-black uppercase tracking-wider ${display.color}`}>
-              {display.label}
-            </h2>
-            <div className="h-1 w-12 bg-current opacity-20 mx-auto rounded-full my-4"></div>
-            <p className="text-base text-slate-600 dark:text-slate-300 leading-relaxed font-medium">
-              {display.desc}
-            </p>
-          </div>
-
+      <div className="max-w-2xl mx-auto">
+        <Card className={`relative overflow-hidden bg-[#0F1B2D] border ${display.border} shadow-2xl transition-all duration-500`}>
           {status === "CERTIFICATE_AVAILABLE" && (
-            <button className="mt-10 px-8 py-3 bg-emerald-600 hover:bg-emerald-700 text-white font-bold rounded-lg shadow-lg shadow-emerald-600/30 transition-all hover:scale-105 active:scale-95 flex items-center gap-2">
-              <svg className="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-4l-4 4m0 0l-4-4m4 4V4" /></svg>
-              Download Official Certificate
-            </button>
+            <>
+              <div className="absolute top-0 right-0 -mt-20 -mr-20 w-64 h-64 bg-emerald-500/20 rounded-full blur-3xl pointer-events-none"></div>
+              <div className="absolute bottom-0 left-0 -mb-20 -ml-20 w-48 h-48 bg-cyan-500/10 rounded-full blur-3xl pointer-events-none"></div>
+            </>
           )}
-        </CardContent>
-      </Card>
+          
+          <CardContent className="p-12 text-center flex flex-col items-center justify-center relative z-10 space-y-6">
+            <div className={`p-6 rounded-3xl ${display.bg} border ${display.border} shadow-inner`}>
+              {display.icon}
+            </div>
+            
+            <div className="space-y-3 max-w-md mx-auto">
+              <h2 className={`text-2xl md:text-3xl font-bold tracking-tight ${display.color}`}>
+                {display.label}
+              </h2>
+              <p className="text-slate-400 text-sm md:text-base leading-relaxed">
+                {display.desc}
+              </p>
+            </div>
+
+            {status === "CERTIFICATE_AVAILABLE" && (
+              <button className="mt-8 px-8 py-3.5 bg-gradient-to-r from-emerald-600 to-emerald-500 hover:from-emerald-500 hover:to-emerald-400 text-white font-medium rounded-xl transition-all shadow-[0_0_20px_rgba(52,211,153,0.3)] hover:shadow-[0_0_30px_rgba(52,211,153,0.5)] flex items-center gap-3">
+                <Download className="w-5 h-5" />
+                Download Official Certificate
+              </button>
+            )}
+          </CardContent>
+        </Card>
+      </div>
     </div>
   );
 }

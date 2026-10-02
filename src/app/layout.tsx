@@ -1,7 +1,5 @@
 import type { Metadata } from "next";
 import localFont from "next/font/local";
-import { Header } from "@/components/layout/header";
-import { Footer } from "@/components/layout/footer";
 import { siteConfig } from "@/config/site";
 import "./globals.css";
 
@@ -31,10 +29,8 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
       lang="en"
       className={`${geistSans.variable} ${geistMono.variable} h-full antialiased`}
     >
-      <body className="flex min-h-full flex-col bg-white text-slate-900 dark:bg-slate-950 dark:text-slate-100">
-        <Header />
-        <main className="flex-1">{children}</main>
-        <Footer />
+      <body className="flex min-h-full flex-col bg-background text-foreground">
+        {children}
       </body>
     </html>
   );
