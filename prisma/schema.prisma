@@ -3,8 +3,9 @@
 // Phase 2: Application Database Model
 
 generator client {
-  provider   = "prisma-client-js"
+  provider        = "prisma-client-js"
   previewFeatures = ["driverAdapters"]
+  engineType      = "client"
 }
 
 datasource db {

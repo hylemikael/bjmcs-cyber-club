@@ -20,7 +20,7 @@
   "dependencies": {
     "@hookform/resolvers": "^5.9.1",
     "@opennextjs/cloudflare": "^1.20.7",
-    "@prisma/adapter-pg": "^7.10.0",
+    "@prisma/adapter-pg": "6.19.3",
     "@prisma/client": "^6.19.3",
     "@tailwindcss/postcss": "^4",
     "jose": "^6.2.12",
